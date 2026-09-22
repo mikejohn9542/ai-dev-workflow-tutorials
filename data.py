@@ -15,13 +15,25 @@ def load_sales_data(path: str) -> pd.DataFrame:
     """Load and validate the sales CSV at ``path``.
 
     Raises FileNotFoundError if the file doesn't exist (via pandas),
-    and ValueError if any required column is missing.
+    and ValueError if any required column is missing, the file has
+    no data rows, the ``date`` column didn't parse as dates, or any
+    numeric column contains non-numeric values.
     """
     df = pd.read_csv(path, parse_dates=["date"])
 
     missing = [c for c in REQUIRED_COLUMNS if c not in df.columns]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
+
+    if len(df) == 0:
+        raise ValueError("CSV file is empty")
+
+    if not pd.api.types.is_datetime64_any_dtype(df["date"]):
+        raise ValueError("Column 'date' could not be parsed as dates")
+
+    for col in ("quantity", "unit_price", "total_amount"):
+        if not pd.api.types.is_numeric_dtype(df[col]):
+            raise ValueError(f"Column '{col}' must be numeric")
 
     return df
 

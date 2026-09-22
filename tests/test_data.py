@@ -47,6 +47,29 @@ def test_load_sales_data_missing_column(tmp_path):
         load_sales_data(path)
 
 
+def test_load_sales_data_empty_csv(tmp_path):
+    path = _write_csv(tmp_path, [])
+
+    with pytest.raises(ValueError):
+        load_sales_data(path)
+
+
+def test_load_sales_data_unparseable_date(tmp_path):
+    rows = [["not-a-date", "ORD-1", "A", "Electronics", "North", 1, 100.0, 100.0]]
+    path = _write_csv(tmp_path, rows)
+
+    with pytest.raises(ValueError):
+        load_sales_data(path)
+
+
+def test_load_sales_data_non_numeric_total_amount(tmp_path):
+    rows = [["2024-01-05", "ORD-1", "A", "Electronics", "North", 1, 100.0, "invalid"]]
+    path = _write_csv(tmp_path, rows)
+
+    with pytest.raises(ValueError):
+        load_sales_data(path)
+
+
 def _sample_df():
     return pd.DataFrame({
         "date": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-10", "2024-02-15"]),
@@ -87,3 +110,13 @@ def test_sales_by_region_sorted_descending():
 
     assert list(result["region"]) == ["North", "South", "East"]
     assert list(result["total_amount"]) == [300.0, 100.0, 30.0]
+
+
+def test_real_csv_matches_prd_expected_output():
+    df = load_sales_data("data/sales-data.csv")
+
+    assert total_orders(df) == 482
+    assert round(total_sales(df)) == 116500
+    assert len(sales_by_category(df)) == 5
+    assert len(sales_by_region(df)) == 4
+    assert len(sales_by_month(df)) == 12

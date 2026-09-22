@@ -30,14 +30,14 @@ col2.metric("Total Orders", f"{total_orders(sales_df):,}")
 category_color = st.sidebar.color_picker("Category chart color", "#1f77b4")
 region_color = st.sidebar.color_picker("Region chart color", "#2ca02c")
 
-st.plotly_chart(build_trend_chart(sales_by_month(sales_df)), use_container_width=True)
+st.plotly_chart(build_trend_chart(sales_by_month(sales_df)), width="stretch")
 
 bar_col1, bar_col2 = st.columns(2)
 bar_col1.plotly_chart(
     build_category_chart(sales_by_category(sales_df), category_color),
-    use_container_width=True,
+    width="stretch",
 )
 bar_col2.plotly_chart(
     build_region_chart(sales_by_region(sales_df), region_color),
-    use_container_width=True,
+    width="stretch",
 )
