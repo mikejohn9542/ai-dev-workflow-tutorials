@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from data import load_sales_data, total_sales, total_orders
+from data import load_sales_data, total_sales, total_orders, sales_by_month
 
 REQUIRED_COLUMNS = [
     "date", "order_id", "product", "category",
@@ -63,3 +63,10 @@ def test_total_sales():
 
 def test_total_orders():
     assert total_orders(_sample_df()) == 4
+
+
+def test_sales_by_month():
+    result = sales_by_month(_sample_df())
+
+    assert list(result["month"]) == ["2024-01", "2024-02"]
+    assert list(result["total_amount"]) == [200.0, 230.0]
