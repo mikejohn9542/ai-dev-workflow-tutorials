@@ -1,7 +1,10 @@
 import streamlit as st
 
-from data import load_sales_data, total_sales, total_orders, sales_by_month
-from charts import build_trend_chart
+from data import (
+    load_sales_data, total_sales, total_orders,
+    sales_by_month, sales_by_category, sales_by_region,
+)
+from charts import build_trend_chart, build_category_chart, build_region_chart
 
 st.set_page_config(page_title="ShopSmart Sales Dashboard", layout="wide")
 st.title("ShopSmart Sales Dashboard")
@@ -24,4 +27,17 @@ col1, col2 = st.columns(2)
 col1.metric("Total Sales", f"${total_sales(sales_df):,.0f}")
 col2.metric("Total Orders", f"{total_orders(sales_df):,}")
 
+category_color = st.sidebar.color_picker("Category chart color", "#1f77b4")
+region_color = st.sidebar.color_picker("Region chart color", "#2ca02c")
+
 st.plotly_chart(build_trend_chart(sales_by_month(sales_df)), use_container_width=True)
+
+bar_col1, bar_col2 = st.columns(2)
+bar_col1.plotly_chart(
+    build_category_chart(sales_by_category(sales_df), category_color),
+    use_container_width=True,
+)
+bar_col2.plotly_chart(
+    build_region_chart(sales_by_region(sales_df), region_color),
+    use_container_width=True,
+)

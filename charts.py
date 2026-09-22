@@ -15,3 +15,27 @@ def build_trend_chart(monthly_df: pd.DataFrame) -> go.Figure:
     )
     fig.update_traces(hovertemplate="%{x}: $%{y:,.2f}<extra></extra>")
     return fig
+
+
+def build_category_chart(category_df: pd.DataFrame, color: str) -> go.Figure:
+    fig = px.bar(
+        category_df,
+        x="category",
+        y="total_amount",
+        labels={"category": "Category", "total_amount": "Sales ($)"},
+        title="Sales by Category",
+    )
+    fig.update_traces(marker_color=color, hovertemplate="%{x}: $%{y:,.2f}<extra></extra>")
+    return fig
+
+
+def build_region_chart(region_df: pd.DataFrame, color: str) -> go.Figure:
+    fig = px.bar(
+        region_df,
+        x="region",
+        y="total_amount",
+        labels={"region": "Region", "total_amount": "Sales ($)"},
+        title="Sales by Region",
+    )
+    fig.update_traces(marker_color=color, hovertemplate="%{x}: $%{y:,.2f}<extra></extra>")
+    return fig

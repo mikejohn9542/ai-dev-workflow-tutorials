@@ -1,7 +1,10 @@
 import pandas as pd
 import pytest
 
-from data import load_sales_data, total_sales, total_orders, sales_by_month
+from data import (
+    load_sales_data, total_sales, total_orders, sales_by_month,
+    sales_by_category, sales_by_region,
+)
 
 REQUIRED_COLUMNS = [
     "date", "order_id", "product", "category",
@@ -70,3 +73,17 @@ def test_sales_by_month():
 
     assert list(result["month"]) == ["2024-01", "2024-02"]
     assert list(result["total_amount"]) == [200.0, 230.0]
+
+
+def test_sales_by_category_sorted_descending():
+    result = sales_by_category(_sample_df())
+
+    assert list(result["category"]) == ["Electronics", "Audio", "Accessories"]
+    assert list(result["total_amount"]) == [300.0, 100.0, 30.0]
+
+
+def test_sales_by_region_sorted_descending():
+    result = sales_by_region(_sample_df())
+
+    assert list(result["region"]) == ["North", "South", "East"]
+    assert list(result["total_amount"]) == [300.0, 100.0, 30.0]
