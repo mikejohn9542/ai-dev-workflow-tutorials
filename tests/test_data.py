@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from data import load_sales_data
+from data import load_sales_data, total_sales, total_orders
 
 REQUIRED_COLUMNS = [
     "date", "order_id", "product", "category",
@@ -42,3 +42,24 @@ def test_load_sales_data_missing_column(tmp_path):
 
     with pytest.raises(ValueError):
         load_sales_data(path)
+
+
+def _sample_df():
+    return pd.DataFrame({
+        "date": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-10", "2024-02-15"]),
+        "order_id": ["ORD-1", "ORD-2", "ORD-3", "ORD-4"],
+        "product": ["A", "B", "C", "D"],
+        "category": ["Electronics", "Audio", "Electronics", "Accessories"],
+        "region": ["North", "South", "North", "East"],
+        "quantity": [1, 2, 1, 3],
+        "unit_price": [100.0, 50.0, 200.0, 10.0],
+        "total_amount": [100.0, 100.0, 200.0, 30.0],
+    })
+
+
+def test_total_sales():
+    assert total_sales(_sample_df()) == 430.0
+
+
+def test_total_orders():
+    assert total_orders(_sample_df()) == 4
