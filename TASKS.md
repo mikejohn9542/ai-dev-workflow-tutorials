@@ -74,6 +74,4 @@ missing empty-CSV/bad-date/non-numeric validation, or the untested PRD
 expected-output numbers. This fix wave is the real TASK-6 verification pass
 and is what should have been caught the first time.
 
-Commit: verification pass — see fix-wave commit ("TASK-6: testing and
-refinement — fix deprecation warnings, harden data validation, sync
-TASKS.md")
+Commit: d484dc5
