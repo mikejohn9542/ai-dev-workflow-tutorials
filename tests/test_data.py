@@ -70,6 +70,20 @@ def test_load_sales_data_non_numeric_total_amount(tmp_path):
         load_sales_data(path)
 
 
+def test_load_sales_data_na_like_string_in_numeric_column(tmp_path):
+    # "N/A" is silently parsed straight to NaN by pandas (it's in the
+    # default na_values list), so it stays numeric dtype and would
+    # otherwise sneak past an is_numeric_dtype-only check.
+    rows = [
+        ["2024-01-05", "ORD-1", "A", "Electronics", "North", 1, 100.0, 100.0],
+        ["2024-01-06", "ORD-2", "B", "Electronics", "North", 1, 100.0, "N/A"],
+    ]
+    path = _write_csv(tmp_path, rows)
+
+    with pytest.raises(ValueError):
+        load_sales_data(path)
+
+
 def _sample_df():
     return pd.DataFrame({
         "date": pd.to_datetime(["2024-01-05", "2024-01-20", "2024-02-10", "2024-02-15"]),
@@ -110,6 +124,50 @@ def test_sales_by_region_sorted_descending():
 
     assert list(result["region"]) == ["North", "South", "East"]
     assert list(result["total_amount"]) == [300.0, 100.0, 30.0]
+
+
+def _sample_df_with_missing_dims():
+    df = _sample_df()
+    df.loc[1, "category"] = None
+    df.loc[2, "region"] = None
+    return df
+
+
+def test_sales_by_category_includes_missing_as_unknown_by_default():
+    df = _sample_df_with_missing_dims()
+
+    result = sales_by_category(df)
+
+    # Nothing is dropped: every row's total_amount is still represented.
+    assert result["total_amount"].sum() == total_sales(df)
+    assert "Unknown" in list(result["category"])
+
+
+def test_sales_by_category_dropna_excludes_missing():
+    df = _sample_df_with_missing_dims()
+
+    result = sales_by_category(df, dropna=True)
+
+    assert "Unknown" not in list(result["category"])
+    assert result["total_amount"].sum() < total_sales(df)
+
+
+def test_sales_by_region_includes_missing_as_unknown_by_default():
+    df = _sample_df_with_missing_dims()
+
+    result = sales_by_region(df)
+
+    assert result["total_amount"].sum() == total_sales(df)
+    assert "Unknown" in list(result["region"])
+
+
+def test_sales_by_region_dropna_excludes_missing():
+    df = _sample_df_with_missing_dims()
+
+    result = sales_by_region(df, dropna=True)
+
+    assert "Unknown" not in list(result["region"])
+    assert result["total_amount"].sum() < total_sales(df)
 
 
 def test_real_csv_matches_prd_expected_output():
