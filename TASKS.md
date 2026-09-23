@@ -10,14 +10,6 @@ This file tracks all work for the E-Commerce Analytics dashboard.
 
 ## To Do
 
-### TASK-7: Deployment to Streamlit Community Cloud
-Deploy the finished dashboard to a public, shareable URL.
-- [ ] App deployed successfully to Streamlit Community Cloud
-- [ ] Public URL loads the dashboard without errors
-- [ ] URL shared with stakeholders for review
-
-Commit:
-
 ## In Progress
 
 ## Done
@@ -75,3 +67,13 @@ expected-output numbers. This fix wave is the real TASK-6 verification pass
 and is what should have been caught the first time.
 
 Commit: d484dc5
+
+### TASK-7: Deployment to Streamlit Community Cloud
+Deploy the finished dashboard to a public, shareable URL.
+- [x] App deployed successfully to Streamlit Community Cloud
+- [x] Public URL loads the dashboard without errors
+- [x] URL shared with stakeholders for review
+
+Live URL: https://sales-dashboard-michaelj.streamlit.app/
+
+Commit:
