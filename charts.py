@@ -17,25 +17,23 @@ def build_trend_chart(monthly_df: pd.DataFrame) -> go.Figure:
     return fig
 
 
-def build_category_chart(category_df: pd.DataFrame, color: str) -> go.Figure:
+def _build_bar_chart(
+    df: pd.DataFrame, x_col: str, x_label: str, color: str, title: str
+) -> go.Figure:
     fig = px.bar(
-        category_df,
-        x="category",
+        df,
+        x=x_col,
         y="total_amount",
-        labels={"category": "Category", "total_amount": "Sales ($)"},
-        title="Sales by Category",
+        labels={x_col: x_label, "total_amount": "Sales ($)"},
+        title=title,
     )
     fig.update_traces(marker_color=color, hovertemplate="%{x}: $%{y:,.2f}<extra></extra>")
     return fig
+
+
+def build_category_chart(category_df: pd.DataFrame, color: str) -> go.Figure:
+    return _build_bar_chart(category_df, "category", "Category", color, "Sales by Category")
 
 
 def build_region_chart(region_df: pd.DataFrame, color: str) -> go.Figure:
-    fig = px.bar(
-        region_df,
-        x="region",
-        y="total_amount",
-        labels={"region": "Region", "total_amount": "Sales ($)"},
-        title="Sales by Region",
-    )
-    fig.update_traces(marker_color=color, hovertemplate="%{x}: $%{y:,.2f}<extra></extra>")
-    return fig
+    return _build_bar_chart(region_df, "region", "Region", color, "Sales by Region")

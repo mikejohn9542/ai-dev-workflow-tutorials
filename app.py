@@ -30,14 +30,32 @@ col2.metric("Total Orders", f"{total_orders(sales_df):,}")
 category_color = st.sidebar.color_picker("Category chart color", "#1f77b4")
 region_color = st.sidebar.color_picker("Region chart color", "#2ca02c")
 
+missing_category = int(sales_df["category"].isna().sum())
+missing_region = int(sales_df["region"].isna().sum())
+drop_missing_dims = False
+if missing_category or missing_region:
+    st.sidebar.info(
+        f"{missing_category} row(s) have no category and {missing_region} "
+        "row(s) have no region. They're included in the breakdown charts "
+        "below under \"Unknown\" so totals still match the KPI cards."
+    )
+    drop_missing_dims = st.sidebar.checkbox(
+        "Exclude rows without a category/region from the breakdown charts",
+        value=False,
+    )
+
 st.plotly_chart(build_trend_chart(sales_by_month(sales_df)), width="stretch")
 
 bar_col1, bar_col2 = st.columns(2)
 bar_col1.plotly_chart(
-    build_category_chart(sales_by_category(sales_df), category_color),
+    build_category_chart(
+        sales_by_category(sales_df, dropna=drop_missing_dims), category_color
+    ),
     width="stretch",
 )
 bar_col2.plotly_chart(
-    build_region_chart(sales_by_region(sales_df), region_color),
+    build_region_chart(
+        sales_by_region(sales_df, dropna=drop_missing_dims), region_color
+    ),
     width="stretch",
 )
